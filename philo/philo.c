@@ -1,69 +1,73 @@
 #include "philo.h"
 
-int msec_from_start(t_philo *philo)
+void    *check_death(void *arg)
 {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (tv.tv_sec * 1000 + tv.tv_usec / 1000 - philo->data->start_msec);
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	while (1)
+	{
+		if (msec_from_start(philo) - philo->time_last_meal > philo->data->time_to_die)
+		{
+			ft_print(philo, "died");
+            ft_exit(philo->data, 1);
+		}
+		usleep(1000);
+	}
 }
 
-void    check_meal_condition(void)
+void ft_routine(t_philo *philo)
 {
-
+    pthread_mutex_lock(&philo->data->forks[philo->fork_sx_id]);
+    ft_print(philo, "has taken a fork\n");
+    while (philo->data->n == 1)
+        usleep(1000000);
+    pthread_mutex_lock(&philo->data->forks[philo->fork_dx_id]);
+    ft_print(philo, "has taken a fork\n");
+    philo->time_last_meal = msec_from_start(philo);
+    ft_print(philo, "is eating\n");
+    usleep(philo->data->time_to_eat * 1000);
+    if (philo->data->meals_goal >= 0 && philo->meals_amount < philo->data->meals_goal)
+        (philo->meals_amount)++;
+    if (philo->meals_amount == philo->data->meals_goal)
+        philo->data->goals_achieved++;
+    if (philo->data->goals_achieved == philo->data->n)
+    {
+        pthread_mutex_lock(&philo->data->print);
+        printf("Each philosopher ate at least %d times.\nGAME OVER\n", philo->data->meals_goal);
+        ft_exit(philo->data, 0);
+    }
+    ft_print(philo, "is sleeping\n");
+    pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
+    pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
+    usleep(philo->data->time_to_sleep * 1000);
+    ft_print(philo, "is thinking\n");
 }
 
-void *give_life(void *arg)
+void *ft_start_routine(void *arg)
 {
-    struct timeval tv;
     t_philo *philo;
+    pthread_t death_thread_id;
     
     philo = (t_philo *)arg;
+	pthread_create(&death_thread_id, NULL, check_death, philo);
     while (1)
     {
-        pthread_mutex_lock(&philo->data->forks[philo->fork_sx_id]);
-        printf("%d %d has taken a fork\n", msec_from_start(philo), philo->philo_id);
-        pthread_mutex_lock(&philo->data->forks[philo->fork_dx_id]);
-        printf("%d %d has taken a fork\n", msec_from_start(philo), philo->philo_id);
-        philo->time_last_meal = msec_from_start(philo);
-        printf("%d %d is eating\n", msec_from_start(philo), philo->philo_id);
-        usleep(philo->data->time_to_eat * 1000);
-        if (philo->data->meals_goal >= 0 && philo->meals_amount < philo->data->meals_goal)
-        {
-            (philo->meals_amount)++;
-            check_meals_condition();
-        }
-        printf("%d %d is sleeping\n", msec_from_start(philo), philo->philo_id);
-        pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
-        pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
-        usleep(philo->data->time_to_sleep * 1000);
-        printf("%d %d is thinking\n", msec_from_start(philo), philo->philo_id);
+        ft_routine(philo);
     }
+    return (0);
 }
 
-void    start_game(t_data *data)
+void    ft_start_game(t_data *data)
 {
-    int			    i;
+    int i;
 
-    data->philosopher = malloc(data->n * sizeof(pthread_t));
-    if (data->philosopher == NULL)
-    {
-        //error
-    }
-    data->forks = malloc(data->n * sizeof(pthread_mutex_t));
-    if (data->forks == NULL)
-    {
-        //error
-    }
     i = -1;
     while (++i < data->n)
     {
-        pthread_create(&data->philosopher[i], NULL, &give_life, (void *)&i);
-        pthread_mutex_init(&data->forks[i], NULL);
-    }
-    while (i-- > 0)
-    {
-        pthread_join(data->philosopher[i].thread_id, NULL);
-        pthread_mutex_destroy(&data->forks[i]);
+        if(pthread_create(&data->philosopher[i].thread_id, NULL, &ft_start_routine, (void *)&i))
+            ft_error("Error:\nThread creation\n", data);
+        usleep(50);
     }
 }
 
@@ -72,9 +76,8 @@ int main(int argc, char **argv)
     t_data data;
 
     memset((void *)&data, 0, sizeof(t_data));
-    ft_parse_argv(argc, argv);
-    ft_init_struct(&data, argv);
+    ft_parse(argc, argv);
+    ft_initialize(&data, argv);
 	ft_start_game(&data);
-	ft_exit(&data);
 	return (0);
 }

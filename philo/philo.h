@@ -6,6 +6,7 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <sys/time.h>
+# include <string.h>
 
 typedef struct s_philo {
 	int				philo_id;
@@ -28,7 +29,18 @@ typedef struct s_data
 	t_philo			*philosopher;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
-	int				game_over;
-}   t_data
+	int				goals_achieved;
+}   t_data;
+
+void	ft_parse(int argc, char **argv);
+void	ft_initialize(t_data *data, char **argv);
+int	ft_atoi(const char *str);
+void	ft_error(char *str, t_data *data);
+void	ft_exit(t_data *data, int n);
+int	ft_isnum(char *str);
+void	ft_print(t_philo *philo, char *str);
+long int get_time(void);
+int ft_strlen(char *s);
+int msec_from_start(t_philo *philo);
 
 #endif
