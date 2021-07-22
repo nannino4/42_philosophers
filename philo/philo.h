@@ -29,6 +29,7 @@ typedef struct s_data
 	t_philo			*philosopher;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
+	pthread_mutex_t	execution;
 	int				goals_achieved;
 }   t_data;
 
@@ -42,5 +43,7 @@ void	ft_print(t_philo *philo, char *str);
 long int get_time(void);
 int ft_strlen(char *s);
 int msec_from_start(t_philo *philo);
+void	ft_free_all(t_data *data);
+void	ft_destroy_mutex(t_data *data);
 
 #endif

@@ -57,6 +57,8 @@ static void	ft_init_mutex(t_data *data)
 	}
 	if (pthread_mutex_init(&data->print, NULL))
 		ft_error("Error:\nMutex \"print\" Init\n", data);
+	if (pthread_mutex_init(&data->execution, NULL))
+		ft_error("Error:\nMutex \"print\" Init\n", data);
 }
 
 void	ft_initialize(t_data *data, char **argv)
