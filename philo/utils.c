@@ -44,6 +44,6 @@ int	ft_isnum(char *str)
 void	ft_print(t_philo *philo, char *str)
 {
 	pthread_mutex_lock(&philo->data->print);
-	printf("%d %d %s\n", msec_from_start(philo), philo->philo_id, str);
+	printf("%d %d %s", msec_from_start(philo), philo->philo_id, str);
 	pthread_mutex_unlock(&philo->data->print);
 }

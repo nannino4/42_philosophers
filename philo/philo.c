@@ -22,7 +22,7 @@ void ft_routine(t_philo *philo)
     pthread_mutex_lock(&philo->data->forks[philo->fork_sx_id]);
     ft_print(philo, "has taken a fork\n");
     while (philo->data->n == 1)
-        usleep(1000000);
+        usleep(philo->data->time_to_die * 10000);
     pthread_mutex_lock(&philo->data->forks[philo->fork_dx_id]);
     ft_print(philo, "has taken a fork\n");
     philo->time_last_meal = msec_from_start(philo);
@@ -40,7 +40,7 @@ void ft_routine(t_philo *philo)
     }
     ft_print(philo, "is sleeping\n");
     pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
-    pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
+    pthread_mutex_unlock(&philo->data->forks[philo->fork_dx_id]);
     usleep(philo->data->time_to_sleep * 1000);
     ft_print(philo, "is thinking\n");
 }
@@ -69,9 +69,11 @@ void    ft_start_game(t_data *data)
     {
         if(pthread_create(&data->philosopher[i].thread_id, NULL, &ft_start_routine, (void *)&data->philosopher[i]))
             ft_error("Error:\nThread creation\n", data);
-        usleep(50);
+        usleep(5);
     }
 	pthread_mutex_lock(&data->execution);
+	pthread_mutex_unlock(&data->execution);
+
 }
 
 int main(int argc, char **argv)
