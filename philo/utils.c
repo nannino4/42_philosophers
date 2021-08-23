@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gcefalo <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/23 19:56:20 by gcefalo           #+#    #+#             */
+/*   Updated: 2021/08/23 20:06:34 by gcefalo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-int ft_strlen(char *s)
+int	ft_strlen(char *s)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!s)
@@ -14,17 +26,17 @@ int ft_strlen(char *s)
 	return (i);
 }
 
-int msec_from_start(t_philo *philo)
+int	msec_from_start(t_philo *philo)
 {
-    return (get_time() - philo->data->start_msec);
+	return (get_time() - philo->data->start_msec);
 }
 
-long int get_time(void)
+long int	get_time(void)
 {
-	struct timeval tv;
+	struct timeval	tv;
 
-    gettimeofday(&tv, NULL);
-    return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 int	ft_isnum(char *str)
