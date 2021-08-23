@@ -1,46 +1,90 @@
 #include "philo.h"
 
-void *give_life(void *arg)
+void    *check_death(void *arg)
 {
-    int id;
-    
-    id = *(int *)arg;
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	while (1)
+	{
+		if (msec_from_start(philo) - philo->time_last_meal > philo->data->time_to_die)
+		{
+            pthread_mutex_lock(&philo->data->print);
+	        printf("%d %d died\n", msec_from_start(philo), philo->philo_id);
+			pthread_mutex_unlock(&philo->data->execution);
+        }
+		usleep(1000);
+	}
 }
 
-void    create_threads(t_input input)
+void ft_routine(t_philo *philo)
 {
-    pthread_t	    thread_id[input.n];
-    pthread_mutex_t mutex[input.n];
-    int			    i;
+    pthread_mutex_lock(&philo->data->forks[philo->fork_sx_id]);
+    ft_print(philo, "has taken a fork\n");
+    while (philo->data->n == 1)
+        usleep(philo->data->time_to_die * 10000);
+    pthread_mutex_lock(&philo->data->forks[philo->fork_dx_id]);
+    ft_print(philo, "has taken a fork\n");
+    philo->time_last_meal = msec_from_start(philo);
+    ft_print(philo, "is eating\n");
+    usleep(philo->data->time_to_eat * 1000);
+    if (philo->data->meals_goal >= 0 && philo->meals_amount < philo->data->meals_goal)
+        (philo->meals_amount)++;
+    if (philo->meals_amount == philo->data->meals_goal)
+        philo->data->goals_achieved++;
+    if (philo->data->goals_achieved == philo->data->n)
+    {
+        pthread_mutex_lock(&philo->data->print);
+        printf("Each philosopher ate at least %d times.\nGAME OVER\n", philo->data->meals_goal);
+        pthread_mutex_unlock(&philo->data->execution);
+    }
+    ft_print(philo, "is sleeping\n");
+    pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
+    pthread_mutex_unlock(&philo->data->forks[philo->fork_dx_id]);
+    usleep(philo->data->time_to_sleep * 1000);
+    ft_print(philo, "is thinking\n");
+}
 
+void *ft_start_routine(void *arg)
+{
+    t_philo *philo;
+    pthread_t death_thread_id;
+    
+    philo = (t_philo *)arg;
+	pthread_create(&death_thread_id, NULL, check_death, arg);
+    while (1)
+    {
+        ft_routine(philo);
+    }
+    return (0);
+}
+
+void    ft_start_game(t_data *data)
+{
+    int i;
+
+	pthread_mutex_lock(&data->execution);
     i = -1;
-    while (++i < input.n)
+    while (++i < data->n)
     {
-        pthread_create(&thread_id[i], NULL, &give_life, (void *)&i);
-        pthread_mutex_init(&mutex[i], NULL);
+        if(pthread_create(&data->philosopher[i].thread_id, NULL, &ft_start_routine, (void *)&data->philosopher[i]))
+            ft_error("Error:\nThread creation\n", data);
+        usleep(5);
     }
-    while (i-- > 0)
-    {
-        pthread_join(thread_id[i], NULL);
-        pthread_mutex_destroy(&mutex[i]);
-    }
-}
+	pthread_mutex_lock(&data->execution);
+	pthread_mutex_unlock(&data->execution);
 
-void    read_input(t_input *input)
-{
-    
 }
 
 int main(int argc, char **argv)
 {
-    t_input     input;
+    t_data data;
 
-    memset((void *)&input, 0, sizeof(t_input));
-    if (argc == 4 || argc == 5)
-    {
-        read_input(&input);
-        create_threads(input);
-    }
-    else
-        printf("\nError: invalid arguments\n\n");
+    memset((void *)&data, 0, sizeof(t_data));
+    ft_parse(argc, argv);
+    ft_initialize(&data, argv);
+	ft_start_game(&data);
+	ft_destroy_mutex(&data);
+	ft_free_all(&data);
+	return (0);
 }
