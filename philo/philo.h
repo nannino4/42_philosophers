@@ -8,6 +8,8 @@
 # include <sys/time.h>
 # include <string.h>
 
+# define EPSILON_USEC 50
+
 typedef struct s_philo {
 	int				philo_id;
 	int				meals_amount;
@@ -45,5 +47,6 @@ int ft_strlen(char *s);
 int msec_from_start(t_philo *philo);
 void	ft_free_all(t_data *data);
 void	ft_destroy_mutex(t_data *data);
+void ft_msleep(t_philo *philo, int start, int time_to_sleep);
 
 #endif

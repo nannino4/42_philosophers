@@ -8,7 +8,8 @@ SRCS		=	\
 				parse.c \
 				philo.c \
 				utils.c \
-				utils_2.c
+				utils_2.c \
+				utils_3.c
 
 OBJS		=	$(SRCS:.c=.o)
 

@@ -27,8 +27,8 @@ void ft_routine(t_philo *philo)
     ft_print(philo, "has taken a fork\n");
     philo->time_last_meal = msec_from_start(philo);
     ft_print(philo, "is eating\n");
-    usleep(philo->data->time_to_eat * 1000);
-    if (philo->data->meals_goal >= 0 && philo->meals_amount < philo->data->meals_goal)
+    ft_msleep(philo, philo->time_last_meal, philo->data->time_to_eat);
+    if (philo->data->meals_goal >= 0 && philo->meals_amount >= 0)
         (philo->meals_amount)++;
     if (philo->meals_amount == philo->data->meals_goal)
         philo->data->goals_achieved++;
@@ -41,7 +41,7 @@ void ft_routine(t_philo *philo)
     ft_print(philo, "is sleeping\n");
     pthread_mutex_unlock(&philo->data->forks[philo->fork_sx_id]);
     pthread_mutex_unlock(&philo->data->forks[philo->fork_dx_id]);
-    usleep(philo->data->time_to_sleep * 1000);
+    ft_msleep(philo, philo->time_last_meal + philo->data->time_to_eat, philo->data->time_to_sleep);
     ft_print(philo, "is thinking\n");
 }
 
@@ -73,7 +73,6 @@ void    ft_start_game(t_data *data)
     }
 	pthread_mutex_lock(&data->execution);
 	pthread_mutex_unlock(&data->execution);
-
 }
 
 int main(int argc, char **argv)

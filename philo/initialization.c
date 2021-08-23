@@ -14,7 +14,7 @@ static void	ft_init_data(t_data *data, char **argv)
 	if (argv[5])
 	{
 		data->meals_goal = ft_atoi(argv[5]);
-		if (data->meals_goal < 0)
+		if (data->meals_goal <= 0)
             ft_error("Error:\ninvalid values\n", data);
 	}
 	else
