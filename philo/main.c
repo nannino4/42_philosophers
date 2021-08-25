@@ -1,31 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_3.c                                          :+:      :+:    :+:   */
+/*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gcefalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/23 19:57:17 by gcefalo           #+#    #+#             */
-/*   Updated: 2021/08/23 20:07:33 by gcefalo          ###   ########.fr       */
+/*   Created: 2021/08/23 19:42:36 by gcefalo           #+#    #+#             */
+/*   Updated: 2021/08/23 20:05:06 by gcefalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_msleep_eat(t_philo *philo)
+int	main(int argc, char **argv)
 {
-	while (msec_from_start(philo) < philo->time_last_meal
-		+ philo->data->time_to_eat)
-	{
-		usleep(EPSILON_USEC);
-	}
-}
+	t_data	data;
 
-void	ft_msleep_sleep(t_philo *philo)
-{
-	while (msec_from_start(philo) < philo->time_last_meal
-		+ philo->data->time_to_eat + philo->data->time_to_sleep)
-	{
-		usleep(EPSILON_USEC);
-	}
+	memset((void *)&data, 0, sizeof(t_data));
+	ft_parse(argc, argv);
+	ft_initialize(&data, argv);
+	ft_start_game(&data);
+	ft_destroy_mutex(&data);
+	ft_free_all(&data);
+	return (0);
 }

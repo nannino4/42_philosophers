@@ -6,7 +6,7 @@
 /*   By: gcefalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/23 19:55:22 by gcefalo           #+#    #+#             */
-/*   Updated: 2021/08/23 20:06:12 by gcefalo          ###   ########.fr       */
+/*   Updated: 2021/08/25 14:24:02 by gcefalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <string.h>
-
-# define EPSILON_USEC 50
 
 typedef struct s_philo {
 	int				philo_id;
@@ -44,9 +42,11 @@ typedef struct s_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	pthread_mutex_t	execution;
+	pthread_mutex_t	goal_achieved;
 	int				goals_achieved;
 }	t_data;
 
+void		ft_start_game(t_data *data);
 void		ft_parse(int argc, char **argv);
 void		ft_initialize(t_data *data, char **argv);
 int			ft_atoi(const char *str);

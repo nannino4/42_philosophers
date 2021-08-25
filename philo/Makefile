@@ -16,16 +16,16 @@ SRCS		=	\
 				exit.c \
 				initialization.c \
 				parse.c \
-				philo.c \
+				main.c \
+				routine.c \
 				utils.c \
-				utils_2.c \
-				utils_3.c
+				utils_2.c
 
 OBJS		=	$(SRCS:.c=.o)
 
 CC			=	gcc
 
-CFLAGS		=	-Wall -Wextra -Werror -g
+CFLAGS		=	-Wall -Wextra -Werror
 
 LIBS		=	-lpthread
 

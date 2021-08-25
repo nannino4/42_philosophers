@@ -28,6 +28,7 @@ void	ft_destroy_mutex(t_data *data)
 	while (++i < data->n)
 	{
 		pthread_mutex_destroy(&data->forks[i]);
+		pthread_detach(data->philosopher[i].thread_id);
 	}
 	pthread_mutex_destroy(&data->print);
 	pthread_mutex_destroy(&data->execution);
